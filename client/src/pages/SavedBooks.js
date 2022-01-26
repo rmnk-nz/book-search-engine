@@ -1,6 +1,6 @@
-// import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/client";
 
 // import { getMe, deleteBook } from '../utils/API';
 import { QUERY_ME } from "../utils/queries";
@@ -58,8 +58,8 @@ const SavedBooks = () => {
         throw new Error('something went wrong!');
       }
       removeBookId(bookId);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
 
