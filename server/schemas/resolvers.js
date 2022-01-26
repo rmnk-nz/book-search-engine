@@ -4,9 +4,12 @@ const { signToken } = require("../utils/auth");
 
 const resolvers = {
     Query: {
-      me: (root, args, context) => {
+      me: async(root, args, context) => {
         if (context.user) {
-            return User.findOne({ _id: context.user._id });
+            const userData = await User.findOne({ _id: context.user._id }).select(
+              "-__v -password"
+            );
+            return userData;;
           }
           throw new AuthenticationError('You need to be logged in!');
         },
@@ -32,30 +35,27 @@ const resolvers = {
         const user = await User.create({ username, email, password });
         const token = signToken(user);
       
-        return { token, profile };
+        return { token, user };
       },
       saveBook: async (root, { input }, context) => {
         if (context.user) {
-          return User.findOneAndUpdate(
+          const updatedUser = await User.findOneAndUpdate(
             { _id: context.user._id },
-            {
-              $addToSet: { saveBooks: input },
-            },
-            {
-              new: true,
-              runValidators: true,
-            }
+            { $addToSet: { savedBooks: input } },
+            { new: true, runValidators: true }
           );
+          return updatedUser;
         }
         throw new AuthenticationError('You need to be logged in!');
       },
       removeBook: async (parent, { bookId }, context) => {
         if (context.user) {
-          return User.findOneAndUpdate(
+          const updatedUser = await User.findOneAndUpdate(
             { _id: context.user._id },
             { $pull: { savedBooks: { bookId: bookId } } },
             { new: true }
           );
+          return updatedUser;
         }
         throw new AuthenticationError('You need to be logged in!');
       },
