@@ -30,7 +30,7 @@ type Book {
  input bookInput {
    bookId: String!
    authors: [String!]
-   desription: String
+   description: String
    title: String!
    image: String
    link: String
